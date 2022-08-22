@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
   mode: "development",
   devServer: {
@@ -27,7 +28,9 @@ module.exports = {
     rules: [
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        // use: ["style-loader", "css-loader"],
+        // MiniCssExtractPlugin.loader帮助对CSS文件进行一个分离, 否则很多css都会被打包到bundle里面, 造成打包体积很大
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
         test: /\.(png|jpg|svg|jpeg|gif)$/i,
@@ -69,6 +72,10 @@ module.exports = {
         from: path.resolve(__dirname, './src/img'),
         to: path.resolve(__dirname, './dist/img')
       }]
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'css/[name].[hash:6].css',
+      chunkFilename: 'css/[name.chunk.css'
     })
   ],
 };
