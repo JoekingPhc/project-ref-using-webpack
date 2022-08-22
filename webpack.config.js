@@ -3,6 +3,8 @@ const webpack = require("webpack");
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 module.exports = {
   mode: "development",
   devServer: {
@@ -78,4 +80,12 @@ module.exports = {
       chunkFilename: 'css/[name.chunk.css'
     })
   ],
+  // 对模块化结果进行一个优化的阶段 optimization, 对资源进行一定的优化
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new UglifyJsPlugin({ sourceMap: true }),
+      new CssMinimizerPlugin()
+    ]
+  }
 };
