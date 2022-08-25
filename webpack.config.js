@@ -3,6 +3,9 @@ const webpack = require("webpack");
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 module.exports = {
   mode: "development",
   devServer: {
@@ -68,14 +71,45 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
       // 匹配路径
-      patterns: [{
-        from: path.resolve(__dirname, './src/img'),
-        to: path.resolve(__dirname, './dist/img')
-      }]
+      patterns: [
+        {
+          from: path.resolve(__dirname, "./src/img"),
+          to: path.resolve(__dirname, "./dist/img"),
+        },
+      ],
     }),
     new MiniCssExtractPlugin({
-      filename: 'css/[name].[hash:6].css',
-      chunkFilename: 'css/[name.chunk.css'
-    })
+      filename: "css/[name].[hash:6].css",
+      chunkFilename: "css/[name.chunk.css",
+    }),
+    // 每次打包自动删除之前的dist目录
+    new CleanWebpackPlugin()
   ],
+  // 对模块化结果进行一个优化的阶段 optimization, 对资源进行一定的优化
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new UglifyJsPlugin({ sourceMap: true }),
+      new CssMinimizerPlugin(),
+    ],
+    // 代码分割
+    splitChunks: {
+      chunks: "all", // 针对所有模块进行异步打包,
+      minSize: 30 * 1024, // 300kb以上的chunk时再去打这个包
+      name: "common",
+      cacheGroups: {
+        // 对某个库进行单独的打包
+        jquery: {
+          name: "jquery",
+          test: /jquery/,
+          chunks: "all",
+        },
+        "lodash-es": {
+          name: "lodash-es",
+          test: /lodash-es/,
+          chunks: "all",
+        },
+      },
+    },
+  },
 };
