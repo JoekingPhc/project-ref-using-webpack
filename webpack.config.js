@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 module.exports = {
-  mode: "development",
+  mode: "production",
   devServer: {
     static: {
       directory: path.join(__dirname, "dist"),
