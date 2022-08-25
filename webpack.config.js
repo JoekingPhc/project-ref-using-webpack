@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 module.exports = {
-  mode: "production",
+  mode: "development",
   devServer: {
     static: {
       directory: path.join(__dirname, "dist"),
@@ -86,6 +86,24 @@ module.exports = {
     minimizer: [
       new UglifyJsPlugin({ sourceMap: true }),
       new CssMinimizerPlugin()
-    ]
+    ],
+    // 代码分割
+    splitChunks: {
+      chunks: 'all', // 针对所有模块进行异步打包,
+      minSize: 30 * 1024, // 300kb以上的chunk时再去打这个包
+      name: 'common', 
+      cacheGroups: {  // 对某个库进行单独的打包
+        jquery: {
+          name: 'jquery',
+          test: /jquery/,
+          chunks: 'all'
+        },
+        'lodash-es': {
+          name: 'lodash-es',
+          test: /lodash-es/,
+          chunks: 'all'
+        }
+      }
+    }
   }
 };

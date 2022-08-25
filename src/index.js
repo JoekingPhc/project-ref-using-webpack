@@ -16,3 +16,6 @@ import "./js/nav.js";
 // 3. 同一个文件下的Tree shaking有触发条件: 那就是mode: 'production'
 // 当mode是开发环境是, 不执行Tree shaking
 // 4. 对import进来的值如果不进行引用, 则也会被tree shaking
+
+import { get } from "lodash-es";
+console.log(get({ a: 1 }, "a"));
