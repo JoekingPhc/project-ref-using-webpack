@@ -6,7 +6,9 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-module.exports = {
+const VueLoaderPlugin = require("vue-loader/lib/plugin");
+
+const config = {
   mode: "development",
   devServer: {
     static: {
@@ -16,16 +18,12 @@ module.exports = {
     port: 1313,
     hot: true,
   },
-  entry: {
-    // new_project: './src/index',
-    // 多入口
-    index: "./src/index.js",
-    login: "./src/login.js",
+  entry: { 
+    index: path.resolve(__dirname, "../src/main.js"),
   },
   output: {
-    path: path.resolve(__dirname, "./dist"),
-    // 根据 entry 内定义的名字来创建这个文件名
     filename: "js/[name].js",
+    path: path.resolve(__dirname, "../dist"),
   },
   module: {
     rules: [
@@ -49,6 +47,17 @@ module.exports = {
           filename: "images/[name].[hash:10][ext]",
         },
       },
+      {
+        test: /\.ejs/,
+        loader: "ejs-loader",
+        options: {
+          esModule: false,
+        },
+      },
+      {
+        test: /\.vue$/,
+        loader: "vue-loader",
+      },
     ],
   },
   plugins: [
@@ -56,14 +65,9 @@ module.exports = {
       // 模版的名称 filename
       // 模版地址 template
       filename: "index.html",
-      template: "./src/index.html",
+      template: path.resolve(__dirname, "../public/index.html"),
       // 映射entry的key, 只会将key里的值打包到对应的template当中去
       chunks: ["index"],
-    }),
-    new HtmlWebpackPlugin({
-      filename: "login.html",
-      template: "./src/login.html",
-      chunks: ["login"],
     }),
     new webpack.ProvidePlugin({
       $: "jquery",
@@ -73,8 +77,8 @@ module.exports = {
       // 匹配路径
       patterns: [
         {
-          from: path.resolve(__dirname, "./src/img"),
-          to: path.resolve(__dirname, "./dist/img"),
+          from: path.resolve(__dirname, "../src/img"),
+          to: path.resolve(__dirname, "../dist/img"),
         },
       ],
     }),
@@ -83,13 +87,15 @@ module.exports = {
       chunkFilename: "css/[name.chunk.css",
     }),
     // 每次打包自动删除之前的dist目录
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new VueLoaderPlugin(),
   ],
   // 对模块化结果进行一个优化的阶段 optimization, 对资源进行一定的优化
   optimization: {
     minimize: true,
     minimizer: [
-      new UglifyJsPlugin({ sourceMap: true }),
+      // new UglifyJsPlugin({ sourceMap: true }),
+      new UglifyJsPlugin(),
       new CssMinimizerPlugin(),
     ],
     // 代码分割
@@ -113,3 +119,5 @@ module.exports = {
     },
   },
 };
+
+module.exports = config;
