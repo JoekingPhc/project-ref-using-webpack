@@ -7,8 +7,8 @@
 					<h1 class="fl"><a href="/"><img src="img/logo.png"/></a></h1>
 					<div class="fr clearfix" id="top1">
 						<p class="fl">
-							<!-- <a id="login" @click="justToLogin">登录</a> -->
-							<a id="login" href="login.html">登录</a>
+							<a id="login" @click="justToLogin">登录</a>
+							<!-- <a id="login" href="login.html">登录</a> -->
 							<a href="#" id="reg">注册</a>
 						</p>
 						<form action="#" method="get" class="fl">
@@ -415,12 +415,24 @@ import "./css/login.css";
 import "jquery";
 import "./js/public.js";
 import "./js/nav.js";
+
+import { useRouter } from "vue-router";
 export default {
-  methods: {
-    justToLogin() {
-      this.$router.push('/login')
-    }
-  }
+	setup() {
+		const router = useRouter();
+		const justToLogin = () => {
+			console.log('jump')
+			router.push('/login');
+		}
+		return {
+			justToLogin
+		}
+	}
+  // methods: {
+  //   justToLogin() {
+  //     this.$router.push('/login')
+  //   }
+  // }
 }
 </script>
 
